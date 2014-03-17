@@ -43,14 +43,14 @@ sub translate :Local {
 	my $lol = $c->req->params->{lol};
 	$c->stash(
 		lol => $lol,
-		result => $c->model('Translate')->translate($lol),
+		result => $c->model('Translator')->translate_to('Scramble', $lol),
 		template => 'index.tt'
 	);
 }
 
 =head2 translate_service
 
-Translate Service
+Translator Service
 
 =cut
 
@@ -86,13 +86,13 @@ Attempt to render a view, if needed.
 
 sub end : ActionClass('RenderView') {
 	my ($self, $c) = @_;
-	my $errors = scalar @{$c->error};
-
-	if ($errors) {
-		$c->res->status(500);
-		$c->res->body('Internal server error');
-		$c->clear_errors;
-	}
+#	my $errors = scalar @{$c->error};
+#
+#	if ($errors) {
+#		$c->res->status(500);
+#		$c->res->body('Internal server error');
+#		$c->clear_errors;
+#	}
 }
 
 =head1 AUTHOR
