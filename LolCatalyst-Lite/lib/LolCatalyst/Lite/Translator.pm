@@ -1,5 +1,6 @@
 package LolCatalyst::Lite::Translator;
 use Moose;
+use aliased 'LolCatalyst::Lite::Interface::TranslationDriver';
 use namespace::clean -except => 'meta';
 use Module::Pluggable::Object;
 
@@ -33,6 +34,11 @@ sub _build__translators {
 	my $translators = {};
 	for my $class (@classes) {
 		Class::MOP::load_class($class);
+
+		unless ($class->does(TranslationDriver)) {
+			confess "Class ${class} in ${base}:: namespace does not implement Translation Driver interface";
+		}
+
 		(my $name = $class) =~ s/^\Q${base}::\E//;
 		$translators->{$name} = $class->new;
 	}

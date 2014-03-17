@@ -38,7 +38,7 @@ Translation action
 
 =cut
 
-sub translate :Local {
+sub translate :Private {
 	my ($self, $c) = @_;
 	my $lol = $c->req->params->{lol};
 	$c->stash(

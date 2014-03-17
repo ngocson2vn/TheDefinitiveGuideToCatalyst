@@ -1,0 +1,3 @@
+<p>
+	[% object.text _ ": " _ result %]
+</p>

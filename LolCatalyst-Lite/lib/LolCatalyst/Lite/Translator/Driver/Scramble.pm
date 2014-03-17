@@ -1,6 +1,7 @@
 package LolCatalyst::Lite::Translator::Driver::Scramble;
 
 use Moose;
+with 'LolCatalyst::Lite::Interface::TranslationDriver';
 
 sub shuffle {
 	for ( my $i = @_; --$i; ) {
