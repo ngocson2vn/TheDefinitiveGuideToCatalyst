@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title>Profile of [% user.username %]</title>
+	</head>
+	<body>
+		[% FOREACH col = users_rs.result_source.columns %]
+			<div>
+				<span>[% col %]</span>
+				<span>[% user.$col %]</span>
+			</div>
+		[% END %]
+		<hr />
+		[% PROCESS components/edit_user.tt %]
+		[% PROCESS components/roles.tt %]
+	</body>
+</html>
