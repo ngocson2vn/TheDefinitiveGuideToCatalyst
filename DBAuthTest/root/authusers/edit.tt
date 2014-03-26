@@ -1,0 +1,17 @@
+<form action="[% c.uri_for(c.controller('authusers').action_for('edit'), [user.id]) %]" method="POST">
+	[% FOREACH col = users_rs.result_source.columns %]
+		<div>
+			<label>[% col %]
+				<input type="text" name="[% col %]" value="[% user.$col %]" />
+			</label>
+			[% IF errors.$col %]
+				<span style="color: red;">[% errors.$col %]</span>
+			[% END %]
+		</div>
+	[% END %]
+	[% PROCESS components/roles.tt %]
+	<input type="submit" name="update" value="Update" />
+</form>
+<form action="[% c.uri_for(c.controller('authusers').action_for('edit'), [user.id]) %]" method="GET">
+	<input type="submit" name="cancel" value="Cancel" />
+</form>
