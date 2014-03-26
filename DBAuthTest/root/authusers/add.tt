@@ -14,6 +14,7 @@
 					[% END %]
 				</div>
 			[% END %]
+			[% PROCESS components/roles.tt %]
 			<input type="submit" value="Create" />
 		</form>
 	</body>

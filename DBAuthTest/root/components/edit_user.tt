@@ -9,5 +9,6 @@
 			[% END %]
 		</div>
 	[% END %]
+	[% PROCESS components/roles.tt %]
 	<input type="submit" value="Update" />
 </form>

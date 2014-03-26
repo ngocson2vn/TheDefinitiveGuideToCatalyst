@@ -1,6 +1,7 @@
 package DBAuthTest::Controller::AuthUsers;
 use Moose;
 use namespace::autoclean;
+use Data::Dumper;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -50,6 +51,9 @@ sub add :Chained('base') :PathPart('add') :Args(0) {
 
 			return;
 		}
+		
+		## Set roles to new user
+		$newuser->set_all_roles($params->{role});
 
 		## Send the user to view the newly created user
 		return $c->res->redirect($c->uri_for(
@@ -66,6 +70,15 @@ sub user: Chained('base') :PathPart('') :CaptureArgs(1) {
 	my $user = $c->stash->{users_rs}->find({ id => $userid, key => 'primary' });
 	die "No such user" if (!$user);
 
+	my $role_names = "";
+	my $flag = 1;
+	for my $role ($user->roles) {
+		$role_names .= ($flag) ? $role->role : ", " . $role->role;
+		$flag = 0;
+	}
+
+	$user->{role_names} = $role_names || "";
+
 	$c->stash(user => $user);
 }
 
@@ -75,41 +88,53 @@ sub profile :Chained('user') :PathPart('profile') :Args(0) {
 
 sub edit :Chained('user') :PathPart('edit') :Args(0) {
 	my ($self, $c) = @_;
+	my $user = $c->stash->{user};
+	my $params = $c->req->params;
+	my $http_method = lc $c->req->method;
 
-	if (lc $c->req->method eq 'post') {
-		my $params = $c->req->params;
-		my $user = $c->stash->{user};
+	if (lc $http_method eq 'post') {
 
 		## Update user's email and/or password
 		$user->update({
 			email => $params->{email},
 			password => $params->{password}
 		});
+		
+		## Set roles to new user
+		$user->set_all_roles($params->{role});
 
-		## Send the user back to the changed profile
-		return $c->res->redirect($c->uri_for(
-			$c->controller('AuthUsers')->action_for('profile'),
-			[ $user->id ]
-		));
+	}
+
+	if (($http_method eq 'post') or (($http_method eq 'get') and $params->{cancel})) {
+		return $c->res->redirect(
+			$c->uri_for(
+				$c->controller()->action_for('profile'),
+				[ $user->id ]
+			)
+		);
 	}
 }
 
-sub set_roles :Chained('user') :PathPart('set_roles') :Args() {
+sub list :Chained('base') :PathPart('list') :Args(0) {
 	my ($self, $c) = @_;
-
-	my $user = $c->stash->{user};
-	if (lc $c->req->method eq 'post') {
-
-		## Fetch all role ids submitted as a list
-		my @roles = $c->req->param('role');
-		$user->set_all_roles(@roles);
-	}
-
-	return $c->res->redirect($c->uri_for(
-		$c->controller()->action_for('profile'),
-		[ $user->id ]
-	));
 }
+
+#sub set_roles :Chained('user') :PathPart('set_roles') :Args() {
+#	my ($self, $c) = @_;
+#
+#	my $user = $c->stash->{user};
+#	if (lc $c->req->method eq 'post') {
+#
+#		## Fetch all role ids submitted as a list
+#		my @roles = $c->req->param('role');
+#		$user->set_all_roles(@roles);
+#	}
+#
+#	return $c->res->redirect($c->uri_for(
+#		$c->controller()->action_for('profile'),
+#		[ $user->id ]
+#	));
+#}
 
 =encoding utf8
 

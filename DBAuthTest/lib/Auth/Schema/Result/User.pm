@@ -168,7 +168,15 @@ sub has_role {
 }
 
 sub set_all_roles {
-	my ($self, @roleids) = @_;
+	my ($self, $ids) = @_;
+
+	my @roleids;
+	my $type = ref $ids;
+	if ($type =~ /ARRAY/) {
+		@roleids = @{$ids};
+	} else {
+		push(@roleids, $ids);
+	}
 
 	## Remove any existing roles, we're replacing them:
 	$self->user_roles->delete;
